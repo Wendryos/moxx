@@ -3,6 +3,7 @@
 
 @push('styles')
 <style>
+    * { margin: 0; padding: 0; }
     body {
         background: rgba(34, 32, 29,1);
         color: #fff;
@@ -206,7 +207,29 @@
 }
 
 
+#error {
+    width: calc(100% - 20px);
+    min-height: 50px;
+    height: auto;
+    text-align: center;
+    position: fixed;
+    z-index: 999999999!important;
+    color: #fff;
+    background: rgb(153, 44, 1);
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 5px rgba(0, 0, 0, 0.15);
+    padding-left:  10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    opacity: 1;
+    transition: 1s;
 
+}
 
 
 
@@ -217,23 +240,32 @@
 
 
 @section('page')
+    @if($errors->any())
+        <div id="error">
+                @foreach ($errors->all() as $err)
+                    {{ $err }}
+                @endforeach
+        </div>
+    @endif
+   
+
     <img class="wallpaper"  src="{{ asset('images/almoxarifado_background.jpg') }}"></div>
 
      <div class="field-login">
         <div class="field-title"> MOXX </div>
-        <form action="javascript:void()" id="form-login">
+        <form action="{{ route('login') }}" method="POST" id="form-login">
             <div class="field-body"> 
-            
+                    @csrf
                     <div class="field-group">
-                        <i class="fas fa-envelope" id="icon-mail"></i>
-                        <label for="user-email" id="label-email"> E-mail </label>
-                        <input type="email" name="email" id="user-email"  placeholder="E-mail" class="field-input" onfocus="viewLabel('label-email', 'user-email')" onblur="blurLabel('label-email', 'user-email')"  required autocomplete="off">
+                        <i     class="fas fa-envelope" id="icon-mail"></i>
+                        <label for="user-email"        id="label-email"> E-mail </label>
+                        <input type="email"            id="user-email"   name="email"     placeholder="E-mail" class="field-input" onfocus="viewLabel('label-email', 'user-email')" onblur="blurLabel('label-email', 'user-email')"  required autocomplete="off" value="{{ old('email') }}">
                     </div>
                     <div class="field-group">
-                        <i class="fas fa-lock" id="icon-password"></i>
-                        <label for="user-password" id="label-senha"> Senha </label>
-                        <input type="password" name="password" id="user-password"  placeholder="Senha" class="field-input"  onfocus="viewLabel('label-senha', 'user-password')" onblur="blurLabel('label-senha', 'user-password')"  required>
-                        <i class="far fa-eye" id="view-password"></i>
+                        <i     class="fas fa-lock"     id="icon-password"></i>
+                        <label for="user-password"     id="label-senha"> Senha </label>
+                        <input type="password"         id="user-password" name="password" placeholder="Senha" class="field-input"  onfocus="viewLabel('label-senha', 'user-password')" onblur="blurLabel('label-senha', 'user-password')"  required>
+                        <i     class="far fa-eye"      id="view-password"></i>
                     </div>
                   
                         <a href="#" id="forgot_account"> Esqueceu seus dados? </a>
@@ -255,7 +287,15 @@
 
 @push('scripts')
      <script>
-     
+         window.addEventListener('load', function() {
+            let erroHTML  =  document.querySelector('#error').outerHTML;
+            if (erroHTML != '') {
+                setTimeout(function() { 
+                    document.querySelector("#error").style = 'opacity: 0'; }, 3000 );
+            }
+         });
+ 
+
          function viewLabel(e, ee) {
             document.querySelector('#' + ee).removeAttribute('placeholder');
             document.querySelector('#' + e).style = 'transition:0.5s;opacity: 1;';
@@ -274,7 +314,8 @@
                 ( this.getAttribute('class') == 'far fa-eye') ? this.setAttribute('class', 'far fa-eye-slash') : this.setAttribute('class', 'far fa-eye');
          });
  
-         
+       
+         /*
          document.querySelector("#form-login").addEventListener('submit', function() {
 
             let data = new FormData(this);
@@ -290,6 +331,6 @@
             .then((response) => alert(response))
 
          });
-
+*/
     </script>
 @endpush
